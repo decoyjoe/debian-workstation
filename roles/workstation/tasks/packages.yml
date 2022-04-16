@@ -1,0 +1,22 @@
+---
+- name: Install apt packages
+  apt:
+    name: '{{ item }}'
+    state: present
+  loop:
+    - 1password
+    - debian-goodies
+    - flatpak
+    - git
+    - git-extras
+    - gnome-tweaks
+    - tmux
+    - zsh
+  become: yes
+
+- name: Install flatpak packages
+  community.general.flatpak:
+    name: '{{ item }}'
+  loop:
+    - md.obsidian.Obsidian
+  become: yes

@@ -1,0 +1,46 @@
+---
+# After installation, Debian retains CDROM entries in APT. They should be removed.
+- name: Remove cdrom entries in /apt/sources/list
+  lineinfile:
+    path: /etc/apt/sources.list
+    state: absent
+    regexp: '^deb cdrom'
+  notify: Update APT
+  become: yes
+
+- name: Add gpg keys for extra repositories
+  ansible.builtin.get_url:
+    url: '{{ item.url }}'
+    dest: /usr/share/keyrings/{{ item.name }}-archive-keyring.gpg
+  loop:
+    - { name: 'brave-browser', url: 'https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg' }
+  become: yes
+
+- name: Add ASCII-armored gpg keys for extra repositories
+  shell:
+    cmd: curl -sS {{ item.url }} | gpg --dearmor --output {{ item.name }}-archive-keyring.gpg
+    chdir: /usr/share/keyrings
+    creates: /usr/share/keyrings/{{ item.name }}-archive-keyring.gpg
+    warn: no # I don't want you to warn about using get_url task instead
+  loop:
+    - { name: '1password', url: 'https://downloads.1password.com/linux/keys/1password.asc' }
+    - { name: 'microsoft', url: 'https://packages.microsoft.com/keys/microsoft.asc' }
+  become: yes
+
+- name: Add third-party apt repositories
+  apt_repository:
+    filename: '{{ item.name }}'
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/{{ item.gpgkey }}-archive-keyring.gpg] {{ item.repo }}'
+    update_cache: true
+  loop:
+    - { name: '1password', gpgkey: '1password', repo: 'https://downloads.1password.com/linux/debian/amd64 stable main' }
+    - { name: 'brave-browser-release', gpgkey: 'brave-browser', repo: 'https://brave-browser-apt-release.s3.brave.com/ stable main' }
+    - { name: 'vscode', gpgkey: 'microsoft', repo: 'https://packages.microsoft.com/repos/code stable main' }
+  notify: Update APT
+  become: yes
+
+- name: Add flathub flatpak repository
+  community.general.flatpak_remote:
+    name: flathub
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+  become: yes
