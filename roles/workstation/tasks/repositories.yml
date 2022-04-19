@@ -39,8 +39,6 @@
   notify: Update APT
   become: yes
 
-- name: Add flathub flatpak repository
-  community.general.flatpak_remote:
-    name: flathub
-    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-  become: yes
+# Flush handlers so we make sure to update apt before installing packages
+- name: Flush handlers
+  meta: flush_handlers
