@@ -5,13 +5,16 @@
     state: present
   loop:
     - 1password
+    - code
     - curl
     - debian-goodies
     - flatpak
     - git
     - git-extras
     - gnome-tweaks
+    - neovim
     - tmux
+    - vim
     - zsh
   become: yes
 
