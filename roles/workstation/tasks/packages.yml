@@ -5,6 +5,7 @@
     state: present
   loop:
     - 1password
+    - curl
     - debian-goodies
     - flatpak
     - git

@@ -18,7 +18,7 @@
 
 - name: Add ASCII-armored gpg keys for extra repositories
   shell:
-    cmd: curl -sS {{ item.url }} | gpg --dearmor --output {{ item.name }}-archive-keyring.gpg
+    cmd: wget -qO- {{ item.url }} | gpg --dearmor --output {{ item.name }}-archive-keyring.gpg
     chdir: /usr/share/keyrings
     creates: /usr/share/keyrings/{{ item.name }}-archive-keyring.gpg
     warn: no # I don't want you to warn about using get_url task instead
