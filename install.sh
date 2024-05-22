@@ -1,15 +1,39 @@
 #!/bin/bash
 
-check_mode=""
-
-if [[ ! -z $1 ]]; then
-    if [[ $1 == "--check" ]]; then
-        check_mode=$1
-    else
-        echo "Usage: install.sh [--check]"
-        exit 1
-    fi
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root. Please use sudo."
+   exit 1
 fi
 
-script_root="$(realpath "${0}" | xargs dirname)"
-ansible-playbook "$script_root/workstation.yml" --ask-become-pass $check_mode
+check_mode=""
+
+usage() {
+    cat << EOF
+Usage: install.sh [OPTIONS]
+
+Options:
+  -C, --check   Run the playbook in check mode (dry run)
+
+This script installs the workstation configuration using Ansible.
+It must be run with root privileges (e.g., using sudo).
+EOF
+    exit 1
+}
+
+# Check for --check or -C option
+if [[ -n $1 ]]; then
+    case $1 in
+        -C|--check)
+            check_mode="--check"
+            ;;
+        *)
+            usage
+            ;;
+    esac
+fi
+
+script_root="$(realpath "$(dirname "$0")")"
+ansible_playbook_cmd=("ansible-playbook" "$script_root/workstation.yml" "$check_mode")
+
+# Execute the Ansible playbook
+"${ansible_playbook_cmd[@]}"
