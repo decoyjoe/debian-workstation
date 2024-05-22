@@ -1,3 +1,8 @@
 ---
 collections:
-  - name: community.general
+  # - name: community.general
+  #   version: '>=6.0.0,<7.0.0'
+
+roles:
+#   - name: example
+#     version: 1.0.0
