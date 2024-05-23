@@ -1,38 +1,77 @@
 ---
 # After installation, Debian retains CDROM entries in APT. They should be removed.
 - name: Remove cdrom entries in /apt/sources/list
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/apt/sources.list
     state: absent
     regexp: '^deb cdrom'
   notify: Update APT
 
+- name: Defaults
+  ansible.builtin.set_fact:
+    workstation_gpg_keys_cli: []
+    workstation_gpg_keys_desktop: []
+    workstation_ascii_armor_key_cli: []
+    workstation_ascii_armor_key_desktop: []
+    workstation_apt_repositories_cli: []
+    workstation_apt_repositories_desktop: []
+
+- name: Third-party gpg keys (CLI)
+  ansible.builtin.set_fact:
+    workstation_gpg_keys_cli: []
+  when: workstation_environment == "CLI"
+
+- name: Third-party gpg keys (Desktop)
+  ansible.builtin.set_fact:
+    workstation_gpg_keys_desktop:
+      - { name: 'brave-browser', url: 'https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg' }
+  when: workstation_environment == "Desktop"
+
 - name: Add gpg keys for extra repositories
   ansible.builtin.get_url:
     url: '{{ item.url }}'
     dest: /usr/share/keyrings/{{ item.name }}-archive-keyring.gpg
-  loop:
-    - { name: 'brave-browser', url: 'https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg' }
+  loop: "{{ workstation_gpg_keys_cli + workstation_gpg_keys_desktop }}"
+
+- name: Third-party ASCII-armored gpg keys (CLI)
+  ansible.builtin.set_fact:
+    workstation_ascii_armor_key_cli: []
+  when: workstation_environment == "CLI"
+
+- name: Third-party ASCII-armored gpg keys (Desktop)
+  ansible.builtin.set_fact:
+    workstation_ascii_armor_key_desktop:
+      - { name: '1password', url: 'https://downloads.1password.com/linux/keys/1password.asc' }
+      - { name: 'microsoft', url: 'https://packages.microsoft.com/keys/microsoft.asc' }
+  when: workstation_environment == "Desktop"
 
 - name: Add ASCII-armored gpg keys for extra repositories
-  shell:
+  ansible.builtin.shell:
     cmd: wget -qO- {{ item.url }} | gpg --dearmor --output {{ item.name }}-archive-keyring.gpg
     chdir: /usr/share/keyrings
     creates: /usr/share/keyrings/{{ item.name }}-archive-keyring.gpg
-    warn: no # I don't want you to warn about using get_url task instead
-  loop:
-    - { name: '1password', url: 'https://downloads.1password.com/linux/keys/1password.asc' }
-    - { name: 'microsoft', url: 'https://packages.microsoft.com/keys/microsoft.asc' }
+  loop: "{{ workstation_ascii_armor_key_cli + workstation_ascii_armor_key_desktop }}"
+
+- name: Third-party apt repositories (CLI)
+  ansible.builtin.set_fact:
+    workstation_apt_repositories_cli: []
+  when: workstation_environment == "CLI"
+
+- name: Third-party apt repositories (Desktop)
+  ansible.builtin.set_fact:
+    workstation_apt_repositories_desktop:
+      - { name: '1password', gpgkey: '1password', repo: 'https://downloads.1password.com/linux/debian/amd64 stable main' }
+      - { name: 'brave-browser-release', gpgkey: 'brave-browser', repo: 'https://brave-browser-apt-release.s3.brave.com/ stable main' }
+      - { name: 'vscode', gpgkey: 'microsoft', repo: 'https://packages.microsoft.com/repos/code stable main' }
+  when: workstation_environment == "Desktop"
 
 - name: Add third-party apt repositories
-  apt_repository:
+  ansible.builtin.apt_repository:
     filename: '{{ item.name }}'
     repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/{{ item.gpgkey }}-archive-keyring.gpg] {{ item.repo }}'
-    update_cache: true
-  loop:
-    - { name: '1password', gpgkey: '1password', repo: 'https://downloads.1password.com/linux/debian/amd64 stable main' }
-    - { name: 'brave-browser-release', gpgkey: 'brave-browser', repo: 'https://brave-browser-apt-release.s3.brave.com/ stable main' }
-    - { name: 'vscode', gpgkey: 'microsoft', repo: 'https://packages.microsoft.com/repos/code stable main' }
+  loop: "{{ workstation_apt_repositories_cli + workstation_apt_repositories_desktop }}"
+  loop_control:
+    loop_var: repo_item
   notify: Update APT
 
 # Flush handlers so we make sure to update apt before installing packages

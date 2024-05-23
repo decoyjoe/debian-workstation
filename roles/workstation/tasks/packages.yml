@@ -1,29 +1,34 @@
 ---
-- name: Install apt packages
-  apt:
-    name: '{{ item }}'
+- name: Install apt packages (CLI)
+  ansible.builtin.apt:
     state: present
-  loop:
-    - 1password
-    - code
-    - curl
-    - debian-goodies
-    - flatpak
-    - git
-    - git-extras
-    - gnome-tweaks
-    - neovim
-    - tmux
-    - vim
-    - zsh
+    name:
+      - curl
+      - debian-goodies
+      - git
+      - git-extras
+      - neovim
+      - tmux
+      - vim
+      - zsh
+  when: workstation_environment == "CLI"
+
+- name: Install apt packages (Desktop)
+  ansible.builtin.apt:
+    state: present
+    name:
+      - 1password
+      - code
+  when: workstation_environment == "Desktop"
 
 - name: Add flathub flatpak repository
   community.general.flatpak_remote:
     name: flathub
     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+  when: workstation_environment == "Desktop"
 
 - name: Install flatpak packages
   community.general.flatpak:
-    name: '{{ item }}'
-  loop:
-    - md.obsidian.Obsidian
+    name:
+      - md.obsidian.Obsidian
+  when: workstation_environment == "Desktop"
