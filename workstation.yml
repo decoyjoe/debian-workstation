@@ -2,5 +2,13 @@
 - hosts: localhost
   connection: local
   become: true
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+    - name: Display workstation environment
+      ansible.builtin.debug:
+        msg: "The workstation environment is {{ workstation_environment }}."
+
   roles:
     - role: workstation

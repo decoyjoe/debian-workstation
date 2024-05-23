@@ -1,0 +1,5 @@
+---
+# Environment of the workstation. One of: CLI, Desktop
+# * CLI: A CLI-only workstation where only terminal applications are needed.
+# * Desktop: A workstation with a full-blown GUI desktop environment (e.g. KDE).
+workstation_environment: CLI
