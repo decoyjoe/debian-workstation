@@ -6,7 +6,6 @@
     state: absent
     regexp: '^deb cdrom'
   notify: Update APT
-  become: yes
 
 - name: Add gpg keys for extra repositories
   ansible.builtin.get_url:
@@ -14,7 +13,6 @@
     dest: /usr/share/keyrings/{{ item.name }}-archive-keyring.gpg
   loop:
     - { name: 'brave-browser', url: 'https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg' }
-  become: yes
 
 - name: Add ASCII-armored gpg keys for extra repositories
   shell:
@@ -25,7 +23,6 @@
   loop:
     - { name: '1password', url: 'https://downloads.1password.com/linux/keys/1password.asc' }
     - { name: 'microsoft', url: 'https://packages.microsoft.com/keys/microsoft.asc' }
-  become: yes
 
 - name: Add third-party apt repositories
   apt_repository:
@@ -37,7 +34,6 @@
     - { name: 'brave-browser-release', gpgkey: 'brave-browser', repo: 'https://brave-browser-apt-release.s3.brave.com/ stable main' }
     - { name: 'vscode', gpgkey: 'microsoft', repo: 'https://packages.microsoft.com/repos/code stable main' }
   notify: Update APT
-  become: yes
 
 # Flush handlers so we make sure to update apt before installing packages
 - name: Flush handlers
