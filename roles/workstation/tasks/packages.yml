@@ -2,23 +2,29 @@
 - name: Install apt packages (CLI)
   ansible.builtin.apt:
     state: present
-    name:
-      - curl
-      - debian-goodies
-      - git
-      - git-extras
-      - neovim
-      - tmux
-      - vim
-      - zsh
+    name: '{{ cli_pkg }}'
+  loop:
+    - curl
+    - debian-goodies
+    - git
+    - git-extras
+    - neovim
+    - tmux
+    - vim
+    - zsh
+  loop_control:
+    loop_var: cli_pkg
   when: workstation_environment == "CLI"
 
 - name: Install apt packages (Desktop)
   ansible.builtin.apt:
     state: present
-    name:
-      - 1password
-      - code
+    name: '{{ desktop_pkg }}'
+  loop:
+    - 1password
+    - code
+  loop_control:
+    loop_var: desktop_pkg
   when: workstation_environment == "Desktop"
 
 - name: Add flathub flatpak repository
