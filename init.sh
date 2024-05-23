@@ -1,9 +1,11 @@
 #!/bin/bash
 
+poetry install
+
 script_root="$(realpath "$(dirname "$0")")"
 
 # Install necessary collections and roles from the requirements file
-ansible-galaxy install -r "$script_root/requirements.yml" --force
+poetry run ansible-galaxy install -r "$script_root/requirements.yml" --force
 
 vars_file="$script_root/vars.yml"
 

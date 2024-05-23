@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root. Please use sudo."
-   exit 1
-fi
-
 check_mode=""
 
 usage() {
@@ -13,9 +8,6 @@ Usage: install.sh [OPTIONS]
 
 Options:
   -C, --check   Run the playbook in check mode (dry run)
-
-This script installs the workstation configuration using Ansible.
-It must be run with root privileges (e.g., using sudo).
 EOF
     exit 1
 }
@@ -33,4 +25,4 @@ if [[ -n $1 ]]; then
 fi
 
 script_root="$(realpath "$(dirname "$0")")"
-ansible-playbook "$script_root/workstation.yml" $check_mode
+sudo $(which poetry) run ansible-playbook "$script_root/workstation.yml" $check_mode
