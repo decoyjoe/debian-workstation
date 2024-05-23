@@ -27,3 +27,7 @@ EOF
 
     echo "Created $vars_file with workstation_environment set to $workstation_environment."
 fi
+
+echo ""
+echo "Run install.sh to execute the debian-workstation automation."
+echo ""
