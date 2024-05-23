@@ -29,5 +29,5 @@ EOF
 fi
 
 echo ""
-echo "Run install.sh to execute the debian-workstation automation."
+echo "Run $(realpath ${script_root})/install.sh to execute the debian-workstation automation."
 echo ""
