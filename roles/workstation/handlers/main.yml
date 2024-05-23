@@ -1,4 +1,4 @@
 ---
-- name: Update APT
-  shell: apt update
-  become: true
+- name: Update Apt
+  ansible.builtin.apt:
+    update_cache: yes

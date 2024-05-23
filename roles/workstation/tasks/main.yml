@@ -1,3 +1,5 @@
 ---
-- include_tasks: repositories.yml
-- include_tasks: packages.yml
+- ansible.builtin.include_tasks: '{{ item }}'
+  loop:
+  - repositories.yml
+  - packages.yml
