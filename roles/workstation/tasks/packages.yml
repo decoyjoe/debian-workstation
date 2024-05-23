@@ -23,6 +23,7 @@
   loop:
     - 1password
     - code
+    - flatpak
   loop_control:
     loop_var: desktop_pkg
   when: workstation_environment == "Desktop"
