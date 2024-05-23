@@ -33,7 +33,4 @@ if [[ -n $1 ]]; then
 fi
 
 script_root="$(realpath "$(dirname "$0")")"
-ansible_playbook_cmd=("ansible-playbook" "$script_root/workstation.yml" "$check_mode")
-
-# Execute the Ansible playbook
-"${ansible_playbook_cmd[@]}"
+ansible-playbook "$script_root/workstation.yml" $check_mode
