@@ -29,9 +29,11 @@
 
 - name: Add gpg keys for extra repositories
   ansible.builtin.get_url:
-    url: '{{ item.url }}'
-    dest: /usr/share/keyrings/{{ item.name }}-archive-keyring.gpg
+    url: '{{ gpg_key.url }}'
+    dest: /usr/share/keyrings/{{ gpg_key.name }}-archive-keyring.gpg
   loop: "{{ workstation_gpg_keys_cli + workstation_gpg_keys_desktop }}"
+  loop_control:
+    loop_var: gpg_key
 
 - name: Third-party ASCII-armored gpg keys (CLI)
   ansible.builtin.set_fact:
@@ -47,10 +49,12 @@
 
 - name: Add ASCII-armored gpg keys for extra repositories
   ansible.builtin.shell:
-    cmd: wget -qO- {{ item.url }} | gpg --dearmor --output {{ item.name }}-archive-keyring.gpg
+    cmd: wget -qO- {{ ascii_gpg_key.url }} | gpg --dearmor --output {{ ascii_gpg_key.name }}-archive-keyring.gpg
     chdir: /usr/share/keyrings
-    creates: /usr/share/keyrings/{{ item.name }}-archive-keyring.gpg
+    creates: /usr/share/keyrings/{{ ascii_gpg_key.name }}-archive-keyring.gpg
   loop: "{{ workstation_ascii_armor_key_cli + workstation_ascii_armor_key_desktop }}"
+  loop_control:
+    loop_var: ascii_gpg_key
 
 - name: Third-party apt repositories (CLI)
   ansible.builtin.set_fact:
@@ -60,18 +64,18 @@
 - name: Third-party apt repositories (Desktop)
   ansible.builtin.set_fact:
     workstation_apt_repositories_desktop:
-      - { name: '1password', gpgkey: '1password', repo: 'https://downloads.1password.com/linux/debian/amd64 stable main' }
-      - { name: 'brave-browser-release', gpgkey: 'brave-browser', repo: 'https://brave-browser-apt-release.s3.brave.com/ stable main' }
-      - { name: 'vscode', gpgkey: 'microsoft', repo: 'https://packages.microsoft.com/repos/code stable main' }
+      - { name: '1password', gpgkey: '1password', url: 'https://downloads.1password.com/linux/debian/amd64 stable main' }
+      - { name: 'brave-browser-release', gpgkey: 'brave-browser', url: 'https://brave-browser-apt-release.s3.brave.com/ stable main' }
+      - { name: 'vscode', gpgkey: 'microsoft', url: 'https://packages.microsoft.com/repos/code stable main' }
   when: workstation_environment == "Desktop"
 
 - name: Add third-party apt repositories
   ansible.builtin.apt_repository:
-    filename: '{{ item.name }}'
-    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/{{ item.gpgkey }}-archive-keyring.gpg] {{ item.repo }}'
+    filename: '{{ repo.name }}'
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/{{ repo.gpgkey }}-archive-keyring.gpg] {{ repo.url }}'
   loop: "{{ workstation_apt_repositories_cli + workstation_apt_repositories_desktop }}"
   loop_control:
-    loop_var: repo_item
+    loop_var: repo
   notify: Update APT
 
 # Flush handlers so we make sure to update apt before installing packages
