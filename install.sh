@@ -25,7 +25,7 @@ if [[ -n $1 ]]; then
 fi
 
 # Fetch latest changes from the remote repository
-git fetch
+git fetch > /dev/null
 
 # Compare local HEAD against remote HEAD
 local_head=$(git rev-parse HEAD)
