@@ -24,5 +24,18 @@ if [[ -n $1 ]]; then
     esac
 fi
 
+# Fetch latest changes from the remote repository
+git fetch
+
+# Compare local HEAD against remote HEAD
+local_head=$(git rev-parse HEAD)
+remote_head=$(git rev-parse @{u})
+
+if [ "$local_head" != "$remote_head" ]; then
+    echo "Update available. Run \"git pull\" to update to the latest version."
+    echo ""
+    sleep 5s
+fi
+
 script_root="$(realpath "$(dirname "$0")")"
 sudo $(which poetry) run ansible-playbook "$script_root/workstation.yml" $check_mode
