@@ -7,28 +7,28 @@ bootstrap() {
       echo "Failed to install packages."
       exit 1
   fi
-
   echo ""
+
   echo "Creating build directory..."
   mkdir -p ~/build
   if [ $? -ne 0 ]; then
       echo "Failed to create build directory."
       exit 1
   fi
+  echo ""
 
   cd ~/build
 
-  echo ""
   echo "Cloning the debian-workstation repository..."
   git clone https://github.com/decoyjoe/debian-workstation.git
   if [ $? -ne 0 ]; then
       echo "Failed to clone repository."
       exit 1
   fi
+  echo ""
 
   cd debian-workstation
 
-  echo ""
   echo "Setting up pipx and installing poetry..."
   pipx ensurepath
   if [ $? -ne 0 ]; then
@@ -41,18 +41,27 @@ bootstrap() {
       echo "Failed to install poetry."
       exit 1
   fi
-
   echo ""
-  echo "Sourcing ~/.profile to make poetry available..."
+
+  echo "Sourcing ~/.profile to make \"poetry\" available..."
   if [ -f ~/.profile ]; then
       source ~/.profile
   else
       echo "Warning: ~/.profile not found. If pipx binaries are not available, please open a new terminal or source the appropriate profile file manually."
   fi
+  echo ""
+
+  script_root="$(realpath "$(dirname "$0")")"
+  init_sh_path=$(realpath --relative-to="." "${script_root}/init.sh")
+
+  # Ensure the relative path is correctly prefixed
+  if [[ "$init_sh_path" != /* && "$init_sh_path" != .* ]]; then
+      init_sh_path="./$init_sh_path"
+  fi
 
   echo ""
   echo "Bootstrap complete."
   echo ""
-  echo "Run $(realpath ~/build/debian-workstation/init.sh) to initialize the automation."
+  echo "Run ${init_sh_path} to initialize the automation."
   echo ""
 }
