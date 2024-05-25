@@ -14,7 +14,6 @@
     - zsh
   loop_control:
     loop_var: cli_pkg
-  when: workstation_environment == "CLI"
 
 - name: APT | Install apt packages (Desktop)
   ansible.builtin.apt:

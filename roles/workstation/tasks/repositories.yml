@@ -9,17 +9,13 @@
 
 - name: SET_FACT | Defaults
   ansible.builtin.set_fact:
-    workstation_gpg_keys_cli: []
     workstation_gpg_keys_desktop: []
-    workstation_ascii_armor_key_cli: []
     workstation_ascii_armor_key_desktop: []
-    workstation_apt_repositories_cli: []
     workstation_apt_repositories_desktop: []
 
 - name: SET_FACT | Third-party gpg keys (CLI)
   ansible.builtin.set_fact:
     workstation_gpg_keys_cli: []
-  when: workstation_environment == "CLI"
 
 - name: SET_FACT | Third-party gpg keys (Desktop)
   ansible.builtin.set_fact:
@@ -38,7 +34,6 @@
 - name: SET_FACT | Third-party ASCII-armored gpg keys (CLI)
   ansible.builtin.set_fact:
     workstation_ascii_armor_key_cli: []
-  when: workstation_environment == "CLI"
 
 - name: SET_FACT | Third-party ASCII-armored gpg keys (Desktop)
   ansible.builtin.set_fact:
@@ -59,7 +54,6 @@
 - name: SET_FACT | Third-party apt repositories (CLI)
   ansible.builtin.set_fact:
     workstation_apt_repositories_cli: []
-  when: workstation_environment == "CLI"
 
 - name: SET_FACT | Third-party apt repositories (Desktop)
   ansible.builtin.set_fact:
