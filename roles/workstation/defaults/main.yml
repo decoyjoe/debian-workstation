@@ -3,3 +3,6 @@
 # * CLI: A CLI-only workstation where only terminal applications are needed.
 # * Desktop: A workstation with a full-blown GUI desktop environment (e.g. KDE).
 workstation_environment: CLI
+
+# The hostname of the system. Hostname will be updated to this value.
+workstation_hostname: debian-workstation
