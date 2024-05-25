@@ -6,9 +6,9 @@
     - vars.yml
 
   pre_tasks:
-    - name: Display workstation environment
+    - name: DEBUG | Display workstation environment
       ansible.builtin.debug:
-        msg: "The workstation environment is {{ workstation_environment }}."
+        msg: "The workstation environment is: {{ workstation_environment }}"
 
   roles:
     - role: workstation

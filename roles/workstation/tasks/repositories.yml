@@ -1,13 +1,13 @@
 ---
 # After installation, Debian retains CDROM entries in APT. They should be removed.
-- name: Remove cdrom entries in /etc/apt/sources.list
+- name: LINEINFILE | Remove cdrom entries in /etc/apt/sources.list
   ansible.builtin.lineinfile:
     path: /etc/apt/sources.list
     state: absent
     regexp: '^deb cdrom'
   notify: Update Apt
 
-- name: Defaults
+- name: SET_FACT | Defaults
   ansible.builtin.set_fact:
     workstation_gpg_keys_cli: []
     workstation_gpg_keys_desktop: []
@@ -16,18 +16,18 @@
     workstation_apt_repositories_cli: []
     workstation_apt_repositories_desktop: []
 
-- name: Third-party gpg keys (CLI)
+- name: SET_FACT | Third-party gpg keys (CLI)
   ansible.builtin.set_fact:
     workstation_gpg_keys_cli: []
   when: workstation_environment == "CLI"
 
-- name: Third-party gpg keys (Desktop)
+- name: SET_FACT | Third-party gpg keys (Desktop)
   ansible.builtin.set_fact:
     workstation_gpg_keys_desktop:
       - { name: 'brave-browser', url: 'https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg' }
   when: workstation_environment == "Desktop"
 
-- name: Add gpg keys for extra repositories
+- name: GET_URL | Add gpg keys for extra repositories
   ansible.builtin.get_url:
     url: '{{ gpg_key.url }}'
     dest: /usr/share/keyrings/{{ gpg_key.name }}-archive-keyring.gpg
@@ -35,19 +35,19 @@
   loop_control:
     loop_var: gpg_key
 
-- name: Third-party ASCII-armored gpg keys (CLI)
+- name: SET_FACT | Third-party ASCII-armored gpg keys (CLI)
   ansible.builtin.set_fact:
     workstation_ascii_armor_key_cli: []
   when: workstation_environment == "CLI"
 
-- name: Third-party ASCII-armored gpg keys (Desktop)
+- name: SET_FACT | Third-party ASCII-armored gpg keys (Desktop)
   ansible.builtin.set_fact:
     workstation_ascii_armor_key_desktop:
       - { name: '1password', url: 'https://downloads.1password.com/linux/keys/1password.asc' }
       - { name: 'microsoft', url: 'https://packages.microsoft.com/keys/microsoft.asc' }
   when: workstation_environment == "Desktop"
 
-- name: Add ASCII-armored gpg keys for extra repositories
+- name: SHELL | Add ASCII-armored gpg keys for extra repositories
   ansible.builtin.shell:
     cmd: wget -qO- {{ ascii_gpg_key.url }} | gpg --dearmor --output {{ ascii_gpg_key.name }}-archive-keyring.gpg
     chdir: /usr/share/keyrings
@@ -56,12 +56,12 @@
   loop_control:
     loop_var: ascii_gpg_key
 
-- name: Third-party apt repositories (CLI)
+- name: SET_FACT | Third-party apt repositories (CLI)
   ansible.builtin.set_fact:
     workstation_apt_repositories_cli: []
   when: workstation_environment == "CLI"
 
-- name: Third-party apt repositories (Desktop)
+- name: SET_FACT | Third-party apt repositories (Desktop)
   ansible.builtin.set_fact:
     workstation_apt_repositories_desktop:
       - { name: '1password', gpgkey: '1password', url: 'https://downloads.1password.com/linux/debian/amd64 stable main' }
@@ -69,7 +69,7 @@
       - { name: 'vscode', gpgkey: 'microsoft', url: 'https://packages.microsoft.com/repos/code stable main' }
   when: workstation_environment == "Desktop"
 
-- name: Add third-party apt repositories
+- name: APT_REPOSITORY | Add third-party apt repositories
   ansible.builtin.apt_repository:
     filename: '{{ repo.name }}'
     repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/{{ repo.gpgkey }}-archive-keyring.gpg] {{ repo.url }}'

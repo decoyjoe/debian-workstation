@@ -1,5 +1,5 @@
 ---
-- name: Install apt packages (CLI)
+- name: APT | Install apt packages (CLI)
   ansible.builtin.apt:
     state: present
     name: '{{ cli_pkg }}'
@@ -16,7 +16,7 @@
     loop_var: cli_pkg
   when: workstation_environment == "CLI"
 
-- name: Install apt packages (Desktop)
+- name: APT | Install apt packages (Desktop)
   ansible.builtin.apt:
     state: present
     name: '{{ desktop_pkg }}'
@@ -28,13 +28,13 @@
     loop_var: desktop_pkg
   when: workstation_environment == "Desktop"
 
-- name: Add flathub flatpak repository
+- name: FLATPAK_REMOTE | Add flathub flatpak repository
   community.general.flatpak_remote:
     name: flathub
     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
   when: workstation_environment == "Desktop"
 
-- name: Install flatpak packages
+- name: FLATPAK | Install flatpak packages
   community.general.flatpak:
     name:
       - md.obsidian.Obsidian
