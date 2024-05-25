@@ -43,11 +43,11 @@ bootstrap() {
   fi
 
   echo ""
-  echo "Sourcing .bash_profile to make poetry available..."
-  if [ -f ~/.bash_profile ]; then
-      source ~/.bash_profile
+  echo "Sourcing ~/.profile to make poetry available..."
+  if [ -f ~/.profile ]; then
+      source ~/.profile
   else
-      echo "Warning: .bash_profile not found. If pipx binaries are not available, please open a new terminal or source the appropriate profile file manually."
+      echo "Warning: ~/.profile not found. If pipx binaries are not available, please open a new terminal or source the appropriate profile file manually."
   fi
 
   echo ""
