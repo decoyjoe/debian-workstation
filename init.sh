@@ -20,9 +20,14 @@ if [[ ! -f "$vars_file" ]]; then
         esac
     done
 
-    cat << EOF > "$vars_file"
+    current_hostname=$(hostname)
+    read -p "System hostname [$current_hostname]: " workstation_hostname
+    workstation_hostname=${workstation_hostname:-$current_hostname}
+
+    cat << EOF > "${vars_file}"
 ---
-workstation_environment: $workstation_environment
+workstation_environment: ${workstation_environment}
+workstation_hostname: ${workstation_hostname}
 EOF
 
     echo "Created $vars_file with workstation_environment set to $workstation_environment."
