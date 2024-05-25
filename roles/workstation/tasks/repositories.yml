@@ -1,11 +1,11 @@
 ---
 # After installation, Debian retains CDROM entries in APT. They should be removed.
-- name: Remove cdrom entries in /apt/sources/list
+- name: Remove cdrom entries in /etc/apt/sources.list
   ansible.builtin.lineinfile:
     path: /etc/apt/sources.list
     state: absent
     regexp: '^deb cdrom'
-  notify: Update APT
+  notify: Update Apt
 
 - name: Defaults
   ansible.builtin.set_fact:
@@ -76,7 +76,7 @@
   loop: "{{ workstation_apt_repositories_cli + workstation_apt_repositories_desktop }}"
   loop_control:
     loop_var: repo
-  notify: Update APT
+  notify: Update Apt
 
 # Flush handlers so we make sure to update apt before installing packages
 - name: Flush handlers
