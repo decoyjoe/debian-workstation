@@ -51,6 +51,9 @@ bootstrap() {
   fi
   echo ""
 
+  echo "Configuring Poetry to create all virtualenv's inside the project root, i.e. \"{project-dir}/.venv\"..."
+  poetry config virtualenvs.in-project true
+
   script_root="$(realpath "$(dirname "$0")")"
   init_sh_path=$(realpath --relative-to="." "${script_root}/init.sh")
 
