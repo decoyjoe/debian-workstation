@@ -1,0 +1,7 @@
+---
+- name: APT | Install Apt packages (Laptop)
+  ansible.builtin.apt:
+    state: present
+    name: '{{ item }}'
+  loop:
+    - tlp

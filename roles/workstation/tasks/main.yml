@@ -3,3 +3,11 @@
   loop:
   - repositories.yml
   - packages.yml
+
+- name: SHELL | Check for battery in the system
+  ansible.builtin.shell: ls /sys/class/power_supply/ | grep -q 'BAT'
+  register: battery_check
+  changed_when: false
+
+- ansible.builtin.include_tasks: laptop.yml
+  when: battery_check.rc == 0
