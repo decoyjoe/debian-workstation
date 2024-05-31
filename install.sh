@@ -27,13 +27,21 @@ fi
 # Fetch latest changes from the remote repository
 git fetch > /dev/null
 
-# Compare local HEAD against remote HEAD
 local_head=$(git rev-parse HEAD)
 remote_head=$(git rev-parse @{u})
+base=$(git merge-base HEAD @{u})
 
-if [ "$local_head" != "$remote_head" ]; then
-    echo "Update available. Run \"git pull\" to update to the latest version."
-    echo ""
+if [ "$local_head" = "$remote_head" ]; then
+    echo "Local repository is up to date with remote."
+else
+    if [ "$local_head" = "$base" ]; then
+        echo "Update available. Run \"git pull\" to update to the latest version."
+    elif [ "$remote_head" = "$base" ]; then
+        echo "Local commits detected. You are ahead of the remote. Consider pushing your changes."
+    else
+        echo "Your local and remote branches have diverged. Consider merging the remote changes."
+    fi
+
     sleep 5s
 fi
 
