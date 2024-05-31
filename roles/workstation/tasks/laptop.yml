@@ -5,3 +5,31 @@
     name: '{{ item }}'
   loop:
     - tlp
+
+- name: SERVICE | Enable and run laptop services
+  ansible.builtin.systemd:
+    name: '{{ item }}'
+    enabled: true
+    state: started
+  loop:
+    - tlp
+
+- name: STATE | Check for the presence of dytc_lapmode
+  ansible.builtin.stat:
+    path: /sys/devices/platform/thinkpad_acpi/dytc_lapmode
+  register: dytc_lapmode
+  changed_when: false
+
+- name: BLOCK | Intel processor
+  when: "'GenuineIntel' in ansible_facts['processor'][1] and not dytc_lapmode.stat.exists"
+  block:
+  - name: APT | Install thermald
+    ansible.builtin.apt:
+      name: thermald
+      state: present
+
+  - name: SYSTEMD | Ensure thermald is enabled and running
+    ansible.builtin.systemd:
+      name: thermald
+      enabled: true
+      state: started
