@@ -27,6 +27,23 @@
     loop_var: desktop_pkg
   when: workstation_environment == "Desktop"
 
+- name: SHELL | Check for KDE Plasma Desktop Environment
+  shell: echo $XDG_CURRENT_DESKTOP
+  register: desktop_env
+  changed_when: false
+
+- name: APT | Install apt packages (KDE)
+  ansible.builtin.apt:
+    state: present
+    name: '{{ kde_pkg }}'
+  loop:
+    - plasma-discover-backend-flatpak
+  loop_control:
+    loop_var: kde_pkg
+  when:
+    - workstation_environment == "Desktop"
+    - '"KDE" in desktop_env.stdout'
+
 - name: FLATPAK_REMOTE | Add flathub flatpak repository
   community.general.flatpak_remote:
     name: flathub
