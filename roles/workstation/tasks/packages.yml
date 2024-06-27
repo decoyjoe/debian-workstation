@@ -8,6 +8,7 @@
     - debian-goodies
     - git
     - git-extras
+    - libimage-exiftool-perl # exiftool tool edit image metadata. Dolphin integration: https://github.com/Merrit/kde-dolphin-remove-metadata
     - neovim
     - tmux
     - vim
