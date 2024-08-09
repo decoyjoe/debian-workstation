@@ -1,4 +1,19 @@
 ---
+- name: COMMAND | Check if system is a VM
+  ansible.builtin.command: systemd-detect-virt
+  register: systemd_detect_virt
+  changed_when: false
+
+- name: FACT | is_vm = true
+  ansible.builtin.set_fact:
+    is_vm: true
+  when: systemd_detect_virt.rc == 0
+
+- name: FACT | is_vm = false
+  ansible.builtin.set_fact:
+    is_vm: false
+  when: systemd_detect_virt.rc != 0
+
 - ansible.builtin.include_tasks: '{{ item }}'
   loop:
   - repositories.yml

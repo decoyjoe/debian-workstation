@@ -21,7 +21,7 @@
   changed_when: false
 
 - name: BLOCK | Intel processor that supports thermald
-  when: "'GenuineIntel' in ansible_facts['processor'][1] and not dytc_lapmode.stat.exists"
+  when: "'GenuineIntel' in ansible_facts['processor'][1] and not dytc_lapmode.stat.exists and not is_vm"
   block:
   - name: APT | Install thermald
     ansible.builtin.apt:
