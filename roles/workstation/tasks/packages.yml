@@ -24,6 +24,7 @@
     name: '{{ desktop_pkg }}'
   loop:
     - 1password
+    - brave-browser
     - code
     - flatpak
   loop_control:
