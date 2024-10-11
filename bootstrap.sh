@@ -2,7 +2,7 @@
 
 bootstrap() {
   echo "Installing git and pipx..."
-  sudo apt update && sudo apt install -y git pipx
+  sudo apt update && sudo apt install -y git pipx python-is-python3
   if [ $? -ne 0 ]; then
       echo "Failed to install packages."
       exit 1

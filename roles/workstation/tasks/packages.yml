@@ -11,6 +11,7 @@
     - libimage-exiftool-perl # exiftool tool edit image metadata. Dolphin integration: https://github.com/Merrit/kde-dolphin-remove-metadata
     - keychain # Manager for ssh-agent
     - neovim
+    - python-is-python3
     - tmux
     - vim
     - zsh
