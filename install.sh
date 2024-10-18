@@ -34,6 +34,7 @@ base=$(git merge-base HEAD @{u})
 if [ "$local_head" = "$remote_head" ]; then
     echo "Local repository is up to date with remote."
 else
+    echo ''
     if [ "$local_head" = "$base" ]; then
         echo "Update available. Run \"git pull\" to update to the latest version."
     elif [ "$remote_head" = "$base" ]; then
