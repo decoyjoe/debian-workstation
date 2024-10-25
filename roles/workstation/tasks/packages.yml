@@ -28,6 +28,7 @@
     - brave-browser
     - code
     - flatpak
+    - wl-clipboard
   loop_control:
     loop_var: desktop_pkg
   when: workstation_environment == "Desktop"
