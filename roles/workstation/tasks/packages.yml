@@ -13,6 +13,7 @@
     - keychain # Manager for ssh-agent
     - neovim
     - python-is-python3
+    - tldr
     - tmux
     - vim
     - zsh
