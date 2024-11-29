@@ -4,6 +4,7 @@
     state: present
     name: '{{ cli_pkg }}'
   loop:
+    - bash-completion
     - curl
     - debian-goodies
     - git
